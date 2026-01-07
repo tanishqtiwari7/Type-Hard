@@ -1,6 +1,53 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-@theme{
-  --color-halkaBlack: #1b1b1b;
-  --color-cskYellow: #fcec56;
+@theme {
+  --color-halkaBlack: #323437;
+  --color-darkBg: #1b1b1b; 
+  --color-cskYellow: #e2b714;
+  --color-textGray: #646669;
+  --color-textWhite: #d1d0c5;
+  --color-error: #ca4754;
 }
+
+body {
+  background-color: var(--color-darkBg);
+  color: var(--color-textGray);
+  overflow-x: hidden;
+  transition: background-color 0.3s ease;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-darkBg); 
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-halkaBlack); 
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-textGray); 
+}
+
+/* Caret Animation */
+@keyframes caretFlash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.caret {
+  animation: caretFlash 1s infinite;
+}
+
+/* Smooth transitions */
+.transition-colors {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+}
+

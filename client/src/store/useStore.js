@@ -2,10 +2,24 @@ import { create } from "zustand";
 
 const useStore = create((set) => ({
   // Auth State
-  user: null,
-  isAuthenticated: false,
-  setUser: (user) => set({ user, isAuthenticated: !!user }),
-  logout: () => set({ user: null, isAuthenticated: false }),
+  user: JSON.parse(localStorage.getItem("user")) || null,
+  token: localStorage.getItem("token") || null,
+  isAuthenticated: !!localStorage.getItem("token"),
+
+  login: (user, token) => {
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", token);
+    set({ user, token, isAuthenticated: true });
+  },
+
+  logout: () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    set({ user: null, token: null, isAuthenticated: false });
+  },
+
+  // Legacy setter for partial updates if needed
+  setUser: (user) => set({ user }),
 
   // Game State
   isTyping: false,

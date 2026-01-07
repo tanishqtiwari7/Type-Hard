@@ -1,15 +1,28 @@
 import express from "express";
-import { checkDailyLimit, mockLogin } from "../controllers/authController.js";
+import { googleAuth, getMe } from "../controllers/authController.js";
 import { saveResult, getLeaderboard } from "../controllers/resultController.js";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
-// Auth routes
-router.post("/auth/login", mockLogin);
-router.get("/auth/limit", checkDailyLimit);
+const verifyToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, process.env.JWT_SECRET || "default_secret", (err, user) => {
+      if (err) return res.sendStatus(403);
+      req.user = user;
+      next();
+    });
+  } else {
+    req.user = null;
+    next();
+  }
+};
 
-// Result routes
-router.post("/results", saveResult);
+router.post("/auth/google", googleAuth);
+router.get("/auth/me", verifyToken, getMe);
+router.post("/results", verifyToken, saveResult);
 router.get("/leaderboard", getLeaderboard);
 
 export default router;

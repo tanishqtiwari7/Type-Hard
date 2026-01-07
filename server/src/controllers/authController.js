@@ -1,47 +1,68 @@
-import pool from "../config/db.js";
+import pool from '../config/db.js';
+import jwt from 'jsonwebtoken';
 
-export const checkDailyLimit = async (req, res) => {
-  const clientIp = req.ip;
-  const today = new Date().toISOString().split("T")[0];
+const generateToken = (user) => {
+  return jwt.sign(
+    { id: user.id, username: user.username, role: user.role },
+    process.env.JWT_SECRET || 'default_secret',
+    { expiresIn: '7d' }
+  );
+};
+
+export const googleAuth = async (req, res) => {
+  const { email, name, googleId, picture } = req.body;
 
   try {
-    // Check if user is logged in (mock check for now)
-    const authHeader = req.headers.authorization;
-    if (authHeader) {
-      // User is logged in, no limit
-      return res.json({ allowed: true, reason: "authenticated" });
-    }
-
-    // Check DB for IP today
-    const result = await pool.query(
-      "SELECT test_count FROM daily_tracking WHERE ip_address = $1 AND last_test_at::date = $2",
-      [clientIp, today]
+    const userCheck = await pool.query(
+      'SELECT * FROM users WHERE google_id = $1 OR email = $2',
+      [googleId, email]
     );
 
-    if (result.rows.length > 0 && result.rows[0].test_count >= 1) {
-      return res.json({ allowed: false, reason: "daily_limit_reached" });
+    let user;
+
+    if (userCheck.rows.length > 0) {
+      user = userCheck.rows[0];
+      if (!user.google_id) {
+        await pool.query(
+          'UPDATE users SET google_id = $1, picture = $2 WHERE id = $3',
+          [googleId, picture, user.id]
+        );
+      }
+    } else {
+      let username = name.replace(/\s+/g, '').toLowerCase() + Math.floor(Math.random() * 10000);
+      const newUser = await pool.query(
+        'INSERT INTO users (google_id, email, username, picture, role) VALUES ($1, $2, $3, $4, ''user'') RETURNING *',
+        [googleId, email, username, picture]
+      );
+      user = newUser.rows[0];
     }
 
-    return res.json({ allowed: true, reason: "guest_allowance", remaining: 1 });
+    const token = generateToken(user);
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        picture: user.picture,
+        role: user.role
+      }
+    });
   } catch (error) {
-    console.error(error);
-    // Fail open if DB error so user isn't blocked unnecessarily during partial outages
-    res.json({ allowed: true, reason: "error_fallback" });
+    console.error('Auth Error:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 };
 
-export const mockLogin = async (req, res) => {
-  // Mock login for dev/demo purposes until Google OAuth is fully configured
-  const { username } = req.body;
-  // In real app, verify token/password.
-  // Here just return a success payload.
-  res.json({
-    token: "mock-jwt-token-" + Date.now(),
-    user: {
-      id: 1,
-      username: username || "GuestUser",
-      email: "guest@example.com",
-      avatar: "https://via.placeholder.com/150",
-    },
-  });
+export const getMe = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: 'Not authenticated' });
+    }
+    const user = await pool.query('SELECT id, username, email, picture, role FROM users WHERE id = $1', [req.user.id]);
+    res.json({ success: true, user: user.rows[0] });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
 };
