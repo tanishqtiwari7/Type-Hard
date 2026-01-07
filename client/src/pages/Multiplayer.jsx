@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 import useStore from "../store/useStore";
-import { FaCopy, FaPlay, FaUsers } from "react-icons/fa";
+import toast from "react-hot-toast";
+import { FaCopy, FaPlay, FaUsers, FaTimes, FaCog } from "react-icons/fa";
 import gsap from "gsap";
 
 // Socket Endpoint
@@ -17,6 +18,8 @@ const Multiplayer = () => {
   const [text, setText] = useState("");
   const [userInput, setUserInput] = useState("");
   const [startTime, setStartTime] = useState(null);
+  const [isHost, setIsHost] = useState(false);
+  const [settings, setSettings] = useState({ wordCount: 30 });
 
   const inputRef = useRef(null);
 
@@ -29,18 +32,38 @@ const Multiplayer = () => {
       setGameState("waiting");
       setPlayers(roomData.players);
       setText(roomData.quote);
-      setRoomId(roomId); // Ensure logic matches
+      setRoomId(roomData.roomId);
+      setSettings(roomData.settings || { wordCount: 30 });
+      setIsHost(roomData.hostId === newSocket.id);
+      toast.success("Joined Room!");
     });
 
     newSocket.on("room-update", (roomData) => {
       setPlayers(roomData.players);
+      setText(roomData.quote);
+      setSettings(roomData.settings || { wordCount: 30 });
+      // Update host status in case host changed (not implemented yet but good practice)
+      if (roomData.hostId === newSocket.id) setIsHost(true);
+    });
+
+    newSocket.on("error", (msg) => {
+      toast.error(msg);
+    });
+
+    newSocket.on("kicked", () => {
+      toast.error("You were kicked by the host");
+      setInRoom(false);
+      setRoomId("");
+      setPlayers([]);
+      setGameState("menu");
     });
 
     newSocket.on("game-started", (startTimestamp) => {
       setGameState("playing");
       setStartTime(startTimestamp);
       setUserInput("");
-      inputRef.current?.focus();
+      setTimeout(() => inputRef.current?.focus(), 100);
+      toast("Race Started!", { icon: "🏎️" });
     });
 
     return () => newSocket.close();
@@ -54,6 +77,17 @@ const Multiplayer = () => {
       roomId: newRoomId,
       username: user?.username || "Guest",
     });
+  };
+
+  const kickPlayer = (targetId) => {
+    if (window.confirm("Kick this player?")) {
+      socket.emit("kick-player", { roomId, targetId });
+    }
+  };
+
+  const updateSettings = (key, value) => {
+    const newSettings = { ...settings, [key]: value };
+    socket.emit("update-settings", { roomId, settings: newSettings });
   };
 
   const joinRoom = () => {
@@ -84,7 +118,8 @@ const Multiplayer = () => {
     socket.emit("typing-progress", { roomId, progress, wpm });
 
     if (value === text) {
-      // Finished
+      setGameState("finished");
+      toast.success(`Finished! ${wpm} WPM`);
     }
   };
 
@@ -143,17 +178,47 @@ const Multiplayer = () => {
           <span className="text-xl text-white font-bold bg-[#2c2e31] px-3 py-1 rounded select-all">
             {roomId}
           </span>
-          <button className="text-cskYellow hover:text-white">
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(roomId);
+              toast.success("Room ID copied!");
+            }}
+            className="text-cskYellow hover:text-white"
+          >
             <FaCopy />
           </button>
         </div>
-        {gameState === "waiting" && (
-          <button
-            onClick={startGame}
-            className="flex items-center gap-2 bg-cskYellow text-halkaBlack font-bold px-6 py-2 rounded hover:brightness-110"
-          >
-            <FaPlay size={12} /> Start Race
-          </button>
+        {gameState === "waiting" && isHost && (
+          <div className="flex items-center gap-4">
+            {/* Settings Dropdown */}
+            <div className="flex items-center gap-2 bg-[#2c2e31] px-4 py-2 rounded">
+              <span className="text-sm text-textGray">
+                <FaCog className="inline mr-1" /> Words:
+              </span>
+              <select
+                value={settings.wordCount}
+                onChange={(e) =>
+                  updateSettings("wordCount", Number(e.target.value))
+                }
+                className="bg-transparent text-cskYellow outline-none font-bold cursor-pointer"
+              >
+                <option value="10">10</option>
+                <option value="30">30</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </div>
+
+            <button
+              onClick={startGame}
+              className="flex items-center gap-2 bg-cskYellow text-halkaBlack font-bold px-6 py-2 rounded hover:brightness-110"
+            >
+              <FaPlay size={12} /> Start Race
+            </button>
+          </div>
+        )}
+        {gameState === "waiting" && !isHost && (
+          <div className="text-textGray animate-pulse">Waiting for host...</div>
         )}
       </div>
 
@@ -162,13 +227,30 @@ const Multiplayer = () => {
         {players.map((player) => (
           <div
             key={player.id}
-            className="bg-[#2c2e31] p-4 rounded-lg border border-white/5"
+            className="bg-[#2c2e31] p-4 rounded-lg border border-white/5 relative group"
           >
             <div className="flex justify-between mb-2 text-sm text-textGray">
               <span>
-                {player.username} {player.id === socket.id && "(You)"}
+                {player.username} {player.id === socket.id && "(You)"}{" "}
+                {player.isHost && (
+                  <FaUsers
+                    className="inline ml-2 text-cskYellow"
+                    title="Host"
+                  />
+                )}
               </span>
-              <span>{player.wpm || 0} WPM</span>
+              <div className="flex items-center gap-4">
+                <span>{player.wpm || 0} WPM</span>
+                {isHost && player.id !== socket.id && (
+                  <button
+                    onClick={() => kickPlayer(player.id)}
+                    className="text-red-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                    title="Kick Player"
+                  >
+                    <FaTimes />
+                  </button>
+                )}
+              </div>
             </div>
             <div className="w-full bg-halkaBlack h-2 rounded-full overflow-hidden">
               <div

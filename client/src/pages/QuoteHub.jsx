@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { QuoteService } from "../services/quote.service";
 import useStore from "../store/useStore";
+import toast from "react-hot-toast";
 import {
   FaPenNib,
   FaThumbsUp,
@@ -44,19 +45,20 @@ const QuoteHub = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isAuthenticated) return alert("Please Login to submit quotes!");
+    if (!isAuthenticated) return toast.error("Please Login to submit quotes!");
 
     setSubmitting(true);
     try {
       const res = await QuoteService.submit(quoteContent, quoteSource);
       if (res.data.success) {
-        alert("Quote Submitted for Review!");
+        toast.success("Quote Submitted for Review!");
         setQuoteContent("");
         setQuoteSource("");
         setActiveTab("pending");
       }
     } catch (err) {
-      alert("Submission Failed");
+      const msg = err.response?.data?.message || "Submission Failed";
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }

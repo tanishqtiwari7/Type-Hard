@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import useStore from "../store/useStore";
 import { GameService } from "../services/game.service";
+import toast from "react-hot-toast";
 
 const WORDS_LIST =
-  "the be of and a to in he have it that for they I with as not on she at by this we you do but from or which one would all will there say who make when can more if no man out other so what time up go about than into could state only new year some take come these know see use get like then first any work now may such give over think most even find day also after way many must look before great back through long where much should well people down own just because good each those feel seem how high too place little world very still nation hand old life tell write become here show house both between need mean call develop under last right move thing general school never same another begin while number part turn real leave might want point form off child few small since against ask late home interest large person end open public follow during present without again hold govern around possible head consider word program problem however lead system set order eye plan run keep face fact group play stand increase early course change help line".split(
+  "the be of and a to in he have it that for they I with as not on she at by this we you do but from or which one would all will there say who make when can more if no man out other so what time up go about than into could state only new year some take come these know see use get like then first any work now may such give over think most even find day also after way many must look before great back through long where much should well people down own just because good each those feel seem how high too place little world very still nation hand old life tell write become here show house both between need mean call develop under last right move thing general school never same another begin while number part turn real leave might want point form off child few small since against ask late home interest large person end open public follow during present without again hold govern around possible head consider word program program problem however lead system set order eye plan run keep face fact group play stand increase early course change help line".split(
     " "
   );
 
@@ -27,6 +28,7 @@ const useTypingGame = (duration = 60) => {
   const inputRef = useRef(null);
   const wordsContainerRef = useRef(null);
   const cursorRef = useRef(null);
+  const isSaving = useRef(false);
 
   // Reset Game Logic
   const resetGame = () => {
@@ -38,6 +40,7 @@ const useTypingGame = (duration = 60) => {
     resetStats();
     setWpm(0);
     setAcc(100);
+    isSaving.current = false;
     inputRef.current?.focus();
   };
 
@@ -82,6 +85,9 @@ const useTypingGame = (duration = 60) => {
   }, [status]);
 
   const finishGame = async () => {
+    if (isSaving.current) return; // Prevent double save
+    isSaving.current = true;
+
     setStatus("finished");
     const timeElapsedInMinutes = duration / 60;
     const correctChars = userInput
@@ -107,9 +113,13 @@ const useTypingGame = (duration = 60) => {
 
       if (!isAuthenticated) {
         localStorage.setItem("th_last_guest_test", new Date().toDateString());
+        toast("Login to save your progress!", { icon: "ℹ️" });
+      } else {
+        toast.success(`Result Saved! ${finalWpm} WPM`);
       }
     } catch (error) {
       console.error("Failed to save result", error);
+      toast.error("Failed to save result");
     }
   };
 

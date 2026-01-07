@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Navbar from "./components/Navbar.jsx";
 import Home from "./pages/Home.jsx";
 import Leaderboard from "./pages/Leaderboard.jsx";
@@ -14,6 +15,15 @@ const App = () => {
   return (
     <Router>
       <div className="min-h-screen bg-[var(--color-darkBg)] text-[var(--color-textGray)] font-mono selection:bg-[var(--color-cskYellow)] selection:text-[var(--color-halkaBlack)]">
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: "#333",
+              color: "#fff",
+            },
+          }}
+        />
         <Navbar />
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12">
           <Routes>
