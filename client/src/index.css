@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+@theme{
+  --color-halkaBlack: #1b1b1b;
+  --color-cskYellow: #fcec56;
+}
