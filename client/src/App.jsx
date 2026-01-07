@@ -5,6 +5,10 @@ import Home from "./pages/Home.jsx";
 import Leaderboard from "./pages/Leaderboard.jsx";
 import Multiplayer from "./pages/Multiplayer.jsx";
 import About from "./pages/About.jsx";
+import Profile from "./pages/Profile.jsx";
+import QuoteHub from "./pages/QuoteHub.jsx";
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
 
 const App = () => {
   return (
@@ -16,7 +20,11 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/multiplayer" element={<Multiplayer />} />
+            <Route path="/quotes" element={<QuoteHub />} />
             <Route path="/about" element={<About />} />
+            <Route path="/profile/:username" element={<Profile />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
         </div>
       </div>

@@ -14,9 +14,7 @@ const Leaderboard = () => {
   const fetchLeaderboard = async () => {
     setLoading(true);
     try {
-      // API currently doesn't support filter params in the controller fully,
-      // but we prepared the frontend for it.
-      const res = await GameService.getLeaderboard();
+      const res = await GameService.getLeaderboard({ type: filter });
       if (res.data.success) {
         setLeaders(res.data.leaderboard);
       }

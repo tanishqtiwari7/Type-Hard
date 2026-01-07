@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     google_id VARCHAR(255) UNIQUE,
     email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255),
     username VARCHAR(50) UNIQUE NOT NULL,
     picture VARCHAR(500),
     role VARCHAR(20) DEFAULT 'user',

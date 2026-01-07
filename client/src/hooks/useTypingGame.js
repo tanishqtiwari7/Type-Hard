@@ -101,7 +101,7 @@ const useTypingGame = (duration = 60) => {
         wpm: finalWpm,
         accuracy: finalAcc,
         raw_wpm: finalWpm,
-        test_type: "60s",
+        test_type: `${duration}s`,
         test_mode: "time",
       });
 
