@@ -6,6 +6,7 @@ import { Server } from "socket.io";
 import { initSocket } from "./services/socket.js";
 import { initCronJobs } from "./services/cron.js";
 import pool from "./config/db.js";
+import apiRoutes from "./routes/api.js";
 
 dotenv.config();
 
@@ -18,7 +19,15 @@ const io = new Server(httpServer, {
   },
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      process.env.CLIENT_URL || "http://localhost:5173",
+      "http://localhost:5174",
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
@@ -37,11 +46,7 @@ app.get("/health", async (req, res) => {
   }
 });
 
-// Placeholder auth route
-app.post("/auth/demo-token", (req, res) => {
-  // returns a demo token; replace with real OAuth/JWT flow
-  res.json({ token: "demo-token" });
-});
+app.use("/", apiRoutes);
 
 // initialize socket handlers
 initSocket(io);

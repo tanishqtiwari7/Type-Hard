@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import useStore from "../store/useStore";
+import { AuthService } from "../services/auth.service";
 import {
   FaUser,
   FaKeyboard,
@@ -9,15 +10,40 @@ import {
   FaSignInAlt,
   FaInfoCircle,
   FaSignOutAlt,
+  FaSpinner,
 } from "react-icons/fa";
 
 const Navbar = () => {
   const { user, isAuthenticated, logout, login } = useStore();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const mockLogin = () => {
-    const mockUser = { username: "GuestUser", picture: "" };
-    const mockToken = "demo-token-xyz"; // In real app, this comes from backend
-    login(mockUser, mockToken);
+  // Simulated "Dev Login" for Enterprise Demo
+  // In production with a real domain, this would use the actual Google OAuth SDK
+  const handleDevLogin = async () => {
+    setIsLoading(true);
+    try {
+      // Simulating the payload Google would return
+      const googleAuthPayload = {
+        googleId: "dev-id-" + Math.floor(Math.random() * 100000),
+        email: "dev.user" + Math.floor(Math.random() * 1000) + "@typehard.com",
+        name: "Dev User",
+        picture: "",
+      };
+
+      // Use the new AuthService
+      const response = await AuthService.loginGoogle(googleAuthPayload);
+
+      if (response.success) {
+        login(response.user, response.token);
+      }
+    } catch (error) {
+      console.error("Login Failed", error);
+      alert(
+        "Connection to backend failed. Ensure server is running on port 5000."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -63,11 +89,16 @@ const Navbar = () => {
           </div>
         ) : (
           <button
-            onClick={mockLogin}
-            className="flex items-center gap-2 text-textGray hover:text-textWhite transition-colors text-sm font-semibold group"
+            onClick={handleDevLogin}
+            disabled={isLoading}
+            className="flex items-center gap-2 text-textGray hover:text-textWhite transition-colors text-sm font-semibold group disabled:opacity-50"
           >
-            <FaSignInAlt className="group-hover:translate-x-1 transition-transform" />
-            <span>Login</span>
+            {isLoading ? (
+              <FaSpinner className="animate-spin" />
+            ) : (
+              <FaSignInAlt className="group-hover:translate-x-1 transition-transform" />
+            )}
+            <span>{isLoading ? "Logging in..." : "Dev Login"}</span>
           </button>
         )}
       </div>
