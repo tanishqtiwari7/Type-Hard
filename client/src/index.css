@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&display=swap');
 @import 'tailwindcss';
 
 @theme {
+  --font-signature: "Caveat", cursive;
   --color-halkaBlack: #323437;
   --color-darkBg: #1b1b1b; 
   --color-cskYellow: #e2b714;
@@ -18,7 +20,7 @@ body {
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 10px;
+  display: none;;
 }
 
 ::-webkit-scrollbar-track {

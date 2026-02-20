@@ -28,8 +28,11 @@ const Home = () => {
       <TypingTest />
 
       {/* Footer Info Area - Good place for keyboard shortcuts or tips */}
-      <div className="fixed bottom-8 text-center text-textGray/30 text-xs font-mono select-none pointer-events-none">
-        Type Hard &copy; 2026 &bull; Enterprise Grade Typing
+      <div className="fixed bottom-8 text-center text-Gray text-xs font-mono select-none">
+        Type Hard &copy; 2026 &bull; Made by {""}
+        <a href="https://github.com/tanishqtiwari7" className="hover:text-white font-signature text-lg">
+          Tanishq
+        </a>
       </div>
     </div>
   );

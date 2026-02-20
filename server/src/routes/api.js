@@ -10,12 +10,6 @@ import {
   getUserProfile,
   getUserHistory,
 } from "../controllers/userController.js";
-import {
-  submitQuote,
-  getPendingQuotes,
-  voteQuote,
-  getActiveQuotes,
-} from "../controllers/quoteController.js";
 import jwt from "jsonwebtoken";
 
 const router = express.Router();
@@ -32,7 +26,7 @@ const verifyToken = (req, res, next) => {
         if (err) return res.sendStatus(403);
         req.user = user;
         next();
-      }
+      },
     );
   } else {
     req.user = null;
@@ -50,11 +44,5 @@ router.get("/leaderboard", getLeaderboard);
 // User Profile Routes
 router.get("/users/:username", getUserProfile);
 router.get("/users/:username/history", getUserHistory);
-
-// Quote Routes
-router.post("/quotes/submit", verifyToken, submitQuote);
-router.get("/quotes/pending", getPendingQuotes);
-router.post("/quotes/:id/vote", verifyToken, voteQuote);
-router.get("/quotes/library", getActiveQuotes);
 
 export default router;

@@ -27,7 +27,7 @@ const useStore = create((set) => ({
 
   // Test Configuration
   config: {
-    mode: "time", // time, words, quote
+    mode: "time", // time, words
     duration: 30,
     punctuation: false,
     numbers: false,

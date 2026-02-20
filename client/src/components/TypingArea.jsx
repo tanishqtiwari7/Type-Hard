@@ -38,7 +38,7 @@ const TypingArea = ({
 
   return (
     <div
-      className="w-full max-w-6xl mx-auto flex flex-col items-center justify-center mt-12 relative outline-none"
+      className="w-full max-w-6xl mx-auto flex flex-col items-center justify-center mt-12 relative outline-none "
       onClick={() => inputRef.current?.focus()}
     >
       {/* Header Info */}
@@ -63,7 +63,7 @@ const TypingArea = ({
       {/* Hidden Input */}
       <input
         ref={inputRef}
-        className="absolute opacity-0 -z-10"
+        className="absolute opacity-0 z-10"
         value={userInput}
         onChange={handleInput}
         autoFocus
@@ -71,7 +71,7 @@ const TypingArea = ({
       />
 
       {/* Typing Area */}
-      <div className="relative w-full min-h-[160px] bg-halkaBlack/0 p-4 rounded-xl">
+      <div className="relative w-full min-h-[150px] bg-halkaBlack/0 p-4 rounded-xl">
         {/* Text Container */}
         <div
           ref={wordsContainerRef}
@@ -131,10 +131,10 @@ const TypingArea = ({
       </div>
 
       {/* Control Actions */}
-      <div className="mt-16 flex gap-4 opacity-70 hover:opacity-100 transition-opacity">
+      <div className="mt-10 flex gap-3 opacity-70 hover:opacity-100 transition-opacity">
         <button
           onClick={resetGame}
-          className="flex items-center gap-2 bg-[#323437] hover:bg-white hover:text-[#1b1b1b] text-textGray px-8 py-3 rounded-lg transition-all font-mono group"
+          className="flex items-center gap-1 bg-[#323437] hover:bg-white hover:text-[#1b1b1b] text-textGray px-6 py-2 rounded-lg transition-all font-mono group"
           title="Restart Test"
         >
           <FaRedoAlt className="group-hover:rotate-180 transition-transform duration-500" />
@@ -142,12 +142,12 @@ const TypingArea = ({
         </button>
       </div>
 
-      <div className="mt-8 text-xs text-textGray/40 font-mono">
+      {/* <div className="mt-8 text-xs text-textGray/40 font-mono">
         <span className="border border-white/10 px-2 py-1 rounded kbd">
           Tab
         </span>{" "}
         to restart
-      </div>
+      </div> */}
     </div>
   );
 };

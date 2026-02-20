@@ -5,7 +5,7 @@ import { FaCrown, FaUserCircle } from "react-icons/fa";
 const Leaderboard = () => {
   const [leaders, setLeaders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("60s"); // '15s', '60s', 'quote'
+  const [filter, setFilter] = useState("60s"); // '15s', '60s'
 
   useEffect(() => {
     fetchLeaderboard();
@@ -35,7 +35,7 @@ const Leaderboard = () => {
       </h1>
 
       <div className="flex gap-4 mb-8">
-        {["15s", "60s", "quote"].map((mode) => (
+        {["15s", "60s"].map((mode) => (
           <button
             key={mode}
             onClick={() => setFilter(mode)}

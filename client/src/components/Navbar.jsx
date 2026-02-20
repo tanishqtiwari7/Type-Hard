@@ -22,7 +22,7 @@ const Navbar = () => {
   // ...
 
   return (
-    <nav className="w-full max-w-7xl mx-auto flex justify-between items-center py-8 px-6 md:px-12 select-none z-50 relative">
+    <nav className="w-full max-w-7xl mx-auto flex justify-between items-center py-5 px-6 md:px-12 select-none z-50 relative">
       <Link to="/" className="flex items-center gap-3 group">
         <div className="text-3xl text-cskYellow transition-transform group-hover:-rotate-12 duration-300">
           <FaKeyboard />
@@ -42,7 +42,6 @@ const Navbar = () => {
         <NavLink to="/" icon={<FaKeyboard />} label="Type" />
         <NavLink to="/leaderboard" icon={<FaTrophy />} label="Top" />
         <NavLink to="/multiplayer" icon={<FaUsers />} label="Versus" />
-        <NavLink to="/quotes" icon={<FaQuoteRight />} label="Quotes" />
         <NavLink to="/about" icon={<FaInfoCircle />} label="About" />
       </div>
 

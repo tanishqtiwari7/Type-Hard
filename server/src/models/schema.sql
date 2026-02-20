@@ -26,7 +26,8 @@ CREATE TABLE IF NOT EXISTS results (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Quote Submissions
+/*
+-- Quote Submissions (Feature Removed)
 CREATE TABLE IF NOT EXISTS quote_submissions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES users(id),
@@ -44,3 +45,4 @@ CREATE TABLE IF NOT EXISTS quotes (
     length INTEGER,
     source VARCHAR(255)
 );
+*/
