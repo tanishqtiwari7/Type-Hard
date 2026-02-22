@@ -24,6 +24,8 @@ const Multiplayer = () => {
   const inputRef = useRef(null);
 
   useEffect(() => {
+    if (!user) return; // Prevent socket connection if not logged in
+
     const newSocket = io(ENDPOINT);
     setSocket(newSocket);
 
@@ -66,8 +68,35 @@ const Multiplayer = () => {
       toast("Race Started!", { icon: "🏎️" });
     });
 
-    return () => newSocket.close();
-  }, []);
+    return () => newSocket && newSocket.close();
+  }, [user]); // Add user to dependency
+
+  if (!user) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+        <h2 className="text-3xl font-bold text-textWhite mb-4">
+          Login Required
+        </h2>
+        <p className="text-textGray mb-8">
+          You must be logged in to play Multiplayer.
+        </p>
+        <div className="flex gap-4">
+          <a
+            href="/login"
+            className="bg-cskYellow text-halkaBlack px-6 py-2 rounded font-bold hover:bg-yellow-400 transition-colors"
+          >
+            Login
+          </a>
+          <a
+            href="/register"
+            className="bg-gray-700 text-white px-6 py-2 rounded font-bold hover:bg-gray-600 transition-colors"
+          >
+            Register
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   const createRoom = () => {
     if (!socket) return;
@@ -107,7 +136,7 @@ const Multiplayer = () => {
     // Calc progress
     const progress = Math.min(
       100,
-      Math.round((value.length / text.length) * 100)
+      Math.round((value.length / text.length) * 100),
     );
 
     // Simple WPM
