@@ -4,6 +4,9 @@ import {
   getMe,
   register,
   login,
+  forgotPassword,
+  resetPassword,
+  verifyEmail,
 } from "../controllers/authController.js";
 import { saveResult, getLeaderboard } from "../controllers/resultController.js";
 import {
@@ -35,7 +38,10 @@ const verifyToken = (req, res, next) => {
 };
 
 router.post("/auth/register", register);
+router.post("/auth/verify-email", verifyEmail);
 router.post("/auth/login", login);
+router.post("/auth/forgot-password", forgotPassword);
+router.post("/auth/reset-password", resetPassword);
 router.post("/auth/google", googleAuth);
 router.get("/auth/me", verifyToken, getMe);
 router.post("/results", verifyToken, saveResult);

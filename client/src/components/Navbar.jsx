@@ -7,19 +7,14 @@ import {
   FaKeyboard,
   FaTrophy,
   FaUsers,
-  FaSignInAlt,
-  FaInfoCircle,
-  FaQuoteRight,
   FaSignOutAlt,
-  FaSpinner,
+  FaSignOutAlt as FaSignOut,
+  FaInfoCircle,
 } from "react-icons/fa";
 
 const Navbar = () => {
   const { user, isAuthenticated, logout, login } = useStore();
   const [isLoading, setIsLoading] = useState(false);
-
-  // Remove handleDevLogin completely or comment it out if you want to keep reference
-  // ...
 
   return (
     <nav className="w-full max-w-7xl mx-auto flex justify-between items-center py-5 px-6 md:px-12 select-none z-50 relative">

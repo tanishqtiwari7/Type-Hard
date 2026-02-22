@@ -10,6 +10,11 @@ export const AuthService = {
     return response.data;
   },
 
+  verifyEmail: async (email, otp) => {
+    const response = await api.post("/auth/verify-email", { email, otp });
+    return response.data;
+  },
+
   login: async (email, password) => {
     const response = await api.post("/auth/login", { email, password });
     return response.data;
@@ -22,6 +27,20 @@ export const AuthService = {
 
   getMe: async () => {
     const response = await api.get("/auth/me");
+    return response.data;
+  },
+
+  forgotPassword: async (email) => {
+    const response = await api.post("/auth/forgot-password", { email });
+    return response.data;
+  },
+
+  resetPassword: async (email, otp, newPassword) => {
+    const response = await api.post("/auth/reset-password", {
+      email,
+      otp,
+      newPassword,
+    });
     return response.data;
   },
 

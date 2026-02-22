@@ -32,7 +32,7 @@ const Login = () => {
 
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md bg-gray-800 p-8 rounded-lg border border-gray-700 shadow-lg">
+      <div className="w-full max-w-md bg-[#2c2e31] p-8 rounded-lg  shadow-lg">
         <div className="flex justify-center mb-6 text-cskYellow text-4xl">
           <FaKeyboard />
         </div>
@@ -54,7 +54,7 @@ const Login = () => {
             <input
               type="email"
               required
-              className="w-full bg-gray-900 border border-gray-600 rounded p-3 text-white focus:outline-none focus:border-cskYellow transition-colors"
+              className="w-full  bg-[#1e1e1e]  rounded p-3 text-white focus:outline-none focus:border-cskYellow transition-colors"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -66,10 +66,18 @@ const Login = () => {
             <input
               type="password"
               required
-              className="w-full bg-gray-900 border border-gray-600 rounded p-3 text-white focus:outline-none focus:border-cskYellow transition-colors"
+              className="w-full  bg-[#1e1e1e]  rounded p-3 text-white focus:outline-none focus:border-cskYellow transition-colors"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            <div className="flex justify-end mt-2">
+              <Link
+                to="/forgot-password"
+                className="text-xs text-textGray hover:text-cskYellow transition-colors"
+              >
+                Forgot Password?
+              </Link>
+            </div>
           </div>
           <button
             type="submit"
